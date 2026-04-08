@@ -1,0 +1,76 @@
+# =========================
+# 🐍 PYTHON (FastAPI Backend)
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual Environment
+venv/
+.env/
+
+# Environment variables
+.env
+.env.*
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# =========================
+# 🛢️ DATABASE
+# =========================
+*.db
+*.sqlite3
+
+# =========================
+# 📱 FLUTTER / DART
+# =========================
+.dart_tool/
+.packages
+.pub/
+build/
+
+# Flutter plugins
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Android
+android/.gradle/
+android/app/build/
+
+# =========================
+# 🧠 IDEs / EDITORS
+# =========================
+.vscode/
+.idea/
+*.iml
+
+# =========================
+# 💻 OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 🔐 SECURITY (CRITICAL)
+# =========================
+# Never commit secrets
+backend/.env
+frontend/.env
+
+# =========================
+# 📦 MISC
+# =========================
+*.log
+*.tmp
+*.swp
