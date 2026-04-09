@@ -1,11 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import Base, engine
-from app.api.routes import auth, category
+from app.api.routes import auth, category, panic
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title='Easible API')
+
+origins = [
+    "http://localhost:58903",
+    "http://127.0.0.1:58903",
+    "*"  # for dev (optional but easiest)
+]
+
 
 # ✅ ADD THIS CORS BLOCK
 app.add_middleware(
@@ -19,6 +26,7 @@ app.add_middleware(
 # routers
 app.include_router(auth.router)
 app.include_router(category.router)
+app.include_router(panic.router)
 
 @app.get('/')
 def root():
