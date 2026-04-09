@@ -12,17 +12,26 @@ class _SignupScreenState extends State<SignupScreen> {
   final nameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
-
   void signup() async {
-    final res = await ApiService.post("/auth/signup", {
-      "name": nameCtrl.text,
-      "email": emailCtrl.text,
-      "password": passCtrl.text,
-    });
+    try {
+      final res = await ApiService.post("/auth/signup", {
+        "name": nameCtrl.text.trim(),
+        "email": emailCtrl.text.trim(),
+        "password": passCtrl.text.trim(),
+      });
 
-    if (res["access_token"] != null) {
-      await StorageService.saveToken(res["access_token"]);
-      context.go("/home");
+      if (res.containsKey("access_token")) {
+        await StorageService.saveToken(res["access_token"]);
+
+        if (!mounted) return;
+        context.go("/home");
+      } else {
+        throw Exception("Invalid response");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Signup Failed: $e")));
     }
   }
 

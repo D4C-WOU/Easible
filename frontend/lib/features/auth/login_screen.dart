@@ -13,15 +13,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final passCtrl = TextEditingController();
 
   void login() async {
-    final res = await ApiService.post("/auth/login", {
-      "email": emailCtrl.text,
-      "password": passCtrl.text,
-    });
+    try {
+      final res = await ApiService.post("/auth/login", {
+        "email": emailCtrl.text.trim(),
+        "password": passCtrl.text.trim(),
+      });
 
-    if (res["access_token"] != null) {
-      await StorageService.saveToken(res["access_token"]);
-      context.go("/home");
-    } else {
+      if (res.containsKey("access_token")) {
+        await StorageService.saveToken(res["access_token"]);
+
+        if (!mounted) return;
+        context.go("/home");
+      } else {
+        throw Exception("Invalid credentials");
+      }
+    } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Login Failed")));

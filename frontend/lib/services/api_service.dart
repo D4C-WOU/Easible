@@ -1,15 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = "http://127.0.0.1:8000"; // Android emulator
+  static String get baseUrl {
+    if (kIsWeb) {
+      return "http://127.0.0.1:8000";
+    } else {
+      return "http://10.0.2.2:8000";
+    }
+  }
 
-  static Future<Map<String, dynamic>> post(
+  // ✅ GET method
+  static Future<dynamic> get(String endpoint) async {
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    final response = await http.get(url);
+
+    return jsonDecode(response.body);
+  }
+
+  // ✅ POST method
+  static Future<dynamic> post(
     String endpoint,
     Map<String, dynamic> data,
   ) async {
+    final url = Uri.parse("$baseUrl$endpoint");
+
     final response = await http.post(
-      Uri.parse("$baseUrl$endpoint"),
+      url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(data),
     );
