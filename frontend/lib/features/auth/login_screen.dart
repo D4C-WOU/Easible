@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/api_service.dart';
 import '../../services/storage_service.dart';
+import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,15 +23,20 @@ class _LoginScreenState extends State<LoginScreen> {
       if (res.containsKey("access_token")) {
         await StorageService.saveToken(res["access_token"]);
 
+        final role = await AuthService.getRole();
+
         if (!mounted) return;
-        context.go("/home");
-      } else {
-        throw Exception("Invalid credentials");
+
+        if (role == "admin") {
+          context.go("/admin");
+        } else {
+          context.go("/home");
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Login Failed")));
+      ).showSnackBar(const SnackBar(content: Text("Login Failed")));
     }
   }
 
