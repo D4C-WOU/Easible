@@ -27,11 +27,19 @@ class HomeScreen extends StatelessWidget {
           label: const Text("Submit Complaint"),
           onPressed: () => context.go("/complaint"),
         ),
+
         //My Bookings
         ElevatedButton.icon(
           icon: const Icon(Icons.history),
           label: const Text("My Bookings"),
           onPressed: () => context.go("/my-bookings"),
+        ),
+
+        //My Complaints
+        ElevatedButton.icon(
+          icon: const Icon(Icons.report),
+          label: const Text("My Complaints"),
+          onPressed: () => context.go("/my-complaints"),
         ),
 
         const SizedBox(height: 10),

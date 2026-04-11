@@ -9,6 +9,10 @@ class ComplaintService {
     return await ApiService.getWithAuth("/complaints/");
   }
 
+  static Future<List<dynamic>> getMyComplaints() async {
+    return await ApiService.getWithAuth("/complaints/my");
+  }
+
   static Future<void> update(int id, String status) async {
     await ApiService.putWithAuth("/complaints/$id?status=$status");
   }

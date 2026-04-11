@@ -34,6 +34,15 @@ def get_complaints(
 ):
     return db.query(Complaint).all()
 
+@router.get("/my")
+def get_my_complaints(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return db.query(Complaint).filter(
+        Complaint.user_id == user["user_id"]
+    ).all()
+
 @router.put("/{complaint_id}")
 def update_complaint(
     complaint_id: int,

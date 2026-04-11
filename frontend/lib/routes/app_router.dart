@@ -12,6 +12,7 @@ import '../features/admin/create_slot_screen.dart';
 import '../features/admin/admin_booking_screen.dart';
 import '../features/services/service_screen.dart';
 import '../features/booking/my_bookings_screen.dart';
+import '../features/feedback/my_complaint_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/login',
@@ -20,11 +21,11 @@ final GoRouter router = GoRouter(
 
     GoRoute(path: '/home', builder: (_, __) => HomeScreen()),
 
-    // ✅ MAKE THESE TOP LEVEL
     GoRoute(path: '/services', builder: (_, __) => ServiceScreen()),
     GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
     GoRoute(path: '/slots', builder: (_, __) => SlotListScreen()),
     GoRoute(path: "/my-bookings", builder: (_, __) => MyBookingsScreen()),
+    GoRoute(path: "/my-complaints", builder: (_, __) => MyComplaintsScreen()),
     GoRoute(path: '/panic', builder: (_, __) => PanicScreen()),
 
     GoRoute(
