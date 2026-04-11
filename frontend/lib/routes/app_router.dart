@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/admin/admin_complaints.dart';
+import 'package:frontend/features/feedback/complaint_screen.dart';
 import 'package:go_router/go_router.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/signup_screen.dart';
@@ -22,6 +24,7 @@ final GoRouter router = GoRouter(
           path: "slots", // 👈 no slash
           builder: (_, __) => SlotListScreen(),
         ),
+        GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
       ],
     ),
     GoRoute(path: '/panic', builder: (context, state) => PanicScreen()),
@@ -29,8 +32,9 @@ final GoRouter router = GoRouter(
       path: "/admin",
       builder: (_, __) => AdminDashboard(),
       routes: [
-        GoRoute(path: "create-slot", builder: (_, __) => CreateSlotScreen()),
+        GoRoute(path: "/create-slot", builder: (_, __) => CreateSlotScreen()),
         GoRoute(path: "/bookings", builder: (_, __) => AdminBookingScreen()),
+        GoRoute(path: '/complaints', builder: (_, __) => AdminComplaints()),
       ],
     ),
   ],
