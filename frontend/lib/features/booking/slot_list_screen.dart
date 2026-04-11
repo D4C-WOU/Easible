@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/slot_service.dart';
+import '../../services/booking_service.dart';
 
 class SlotListScreen extends StatefulWidget {
   @override
@@ -38,7 +39,20 @@ class _SlotListScreenState extends State<SlotListScreen> {
                 return ListTile(
                   title: Text("${s["date"]} - ${s["time"]}"),
                   subtitle: Text("Facility ID: ${s["facility_id"]}"),
-                  trailing: Text(s["status"]),
+                  trailing: ElevatedButton(
+                    onPressed: s["status"] == "available"
+                        ? () async {
+                            await BookingService.createBooking(s["id"]);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Booking Requested"),
+                              ),
+                            );
+                          }
+                        : null,
+                    child: const Text("Book"),
+                  ),
                 );
               },
             ),

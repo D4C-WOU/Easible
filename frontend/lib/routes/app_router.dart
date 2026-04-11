@@ -7,6 +7,7 @@ import '../features/panic/panic_screen.dart';
 import '../features/admin/admin_dashboard.dart';
 import '../features/booking/slot_list_screen.dart';
 import '../features/admin/create_slot_screen.dart';
+import '../features/admin/admin_booking_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/login', // or wherever you want
@@ -29,6 +30,7 @@ final GoRouter router = GoRouter(
       builder: (_, __) => AdminDashboard(),
       routes: [
         GoRoute(path: "create-slot", builder: (_, __) => CreateSlotScreen()),
+        GoRoute(path: "/bookings", builder: (_, __) => AdminBookingScreen()),
       ],
     ),
   ],

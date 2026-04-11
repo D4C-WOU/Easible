@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import Base, engine
-from app.api.routes import auth, category, panic , admin, slot
+from app.api.routes import auth, category, panic , admin, slot,booking
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,6 +29,7 @@ app.include_router(category.router)
 app.include_router(panic.router)
 app.include_router(admin.router)
 app.include_router(slot.router)
+app.include_router(booking.router)
 
 @app.get('/')
 def root():
