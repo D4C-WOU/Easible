@@ -10,6 +10,7 @@ import '../features/admin/admin_dashboard.dart';
 import '../features/booking/slot_list_screen.dart';
 import '../features/admin/create_slot_screen.dart';
 import '../features/admin/admin_booking_screen.dart';
+import '../features/services/service_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/login', // or wherever you want
@@ -25,6 +26,7 @@ final GoRouter router = GoRouter(
           builder: (_, __) => SlotListScreen(),
         ),
         GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
+        GoRoute(path: "/services", builder: (_, __) => ServiceScreen()),
       ],
     ),
     GoRoute(path: '/panic', builder: (context, state) => PanicScreen()),

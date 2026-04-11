@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/category_service.dart';
 import '../../models/category_model.dart';
+import '../../services/map_service.dart';
 
 class DirectoryScreen extends StatefulWidget {
   @override
@@ -41,6 +42,15 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                 title: Text(item.name),
                 subtitle: Text(item.description),
                 leading: const Icon(Icons.location_city),
+
+                // ✅ ADDED THIS PART
+                trailing: IconButton(
+                  icon: const Icon(Icons.map),
+                  onPressed: () {
+                    // TEMP static coords (later connect facility)
+                    MapService.openMap(19.0760, 72.8777);
+                  },
+                ),
               );
             },
           );
