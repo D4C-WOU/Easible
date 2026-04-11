@@ -28,9 +28,24 @@ class _AdminComplaintsState extends State<AdminComplaints> {
         itemCount: complaints.length,
         itemBuilder: (_, i) {
           final c = complaints[i];
+
           return ListTile(
             title: Text(c["message"]),
             subtitle: Text("Status: ${c["status"]}"),
+
+            // ✅ ADDED TRAILING BUTTON
+            trailing: IconButton(
+              icon: Icon(
+                c["status"] == "open" ? Icons.check : Icons.undo,
+                color: Colors.green,
+              ),
+              onPressed: () async {
+                final newStatus = c["status"] == "open" ? "resolved" : "open";
+
+                await ComplaintService.update(c["id"], newStatus);
+                load(); // refresh list
+              },
+            ),
           );
         },
       ),

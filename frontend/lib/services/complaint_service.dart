@@ -8,4 +8,8 @@ class ComplaintService {
   static Future<List<dynamic>> getAll() async {
     return await ApiService.getWithAuth("/complaints/");
   }
+
+  static Future<void> update(int id, String status) async {
+    await ApiService.putWithAuth("/complaints/$id?status=$status");
+  }
 }

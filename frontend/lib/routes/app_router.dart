@@ -11,32 +11,29 @@ import '../features/booking/slot_list_screen.dart';
 import '../features/admin/create_slot_screen.dart';
 import '../features/admin/admin_booking_screen.dart';
 import '../features/services/service_screen.dart';
+import '../features/booking/my_bookings_screen.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/login', // or wherever you want
+  initialLocation: '/login',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => HomeScreen()),
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
-    GoRoute(
-      path: "/home",
-      builder: (_, __) => HomeScreen(),
-      routes: [
-        GoRoute(
-          path: "slots", // 👈 no slash
-          builder: (_, __) => SlotListScreen(),
-        ),
-        GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
-        GoRoute(path: "/services", builder: (_, __) => ServiceScreen()),
-      ],
-    ),
-    GoRoute(path: '/panic', builder: (context, state) => PanicScreen()),
+
+    GoRoute(path: '/home', builder: (_, __) => HomeScreen()),
+
+    // ✅ MAKE THESE TOP LEVEL
+    GoRoute(path: '/services', builder: (_, __) => ServiceScreen()),
+    GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
+    GoRoute(path: '/slots', builder: (_, __) => SlotListScreen()),
+    GoRoute(path: "/my-bookings", builder: (_, __) => MyBookingsScreen()),
+    GoRoute(path: '/panic', builder: (_, __) => PanicScreen()),
+
     GoRoute(
       path: "/admin",
       builder: (_, __) => AdminDashboard(),
       routes: [
-        GoRoute(path: "/create-slot", builder: (_, __) => CreateSlotScreen()),
-        GoRoute(path: "/bookings", builder: (_, __) => AdminBookingScreen()),
-        GoRoute(path: '/complaints', builder: (_, __) => AdminComplaints()),
+        GoRoute(path: "create-slot", builder: (_, __) => CreateSlotScreen()),
+        GoRoute(path: "bookings", builder: (_, __) => AdminBookingScreen()),
+        GoRoute(path: "complaints", builder: (_, __) => AdminComplaints()),
       ],
     ),
   ],

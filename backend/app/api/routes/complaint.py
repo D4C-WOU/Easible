@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user, get_current_admin
 from app.models.complaint import Complaint
@@ -33,3 +33,20 @@ def get_complaints(
     admin=Depends(get_current_admin),
 ):
     return db.query(Complaint).all()
+
+@router.put("/{complaint_id}")
+def update_complaint(
+    complaint_id: int,
+    status: str,
+    db: Session = Depends(get_db),
+    admin=Depends(get_current_admin),
+):
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id).first()
+
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    complaint.status = status
+    db.commit()
+
+    return {"message": "Updated"}

@@ -34,6 +34,16 @@ def create_booking(
 
     return new_booking
 
+#users bookings
+@router.get("/my")
+def get_my_bookings(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return db.query(Booking).filter(
+        Booking.user_id == user["user_id"]
+    ).all()
+
 
 # 🛠️ ADMIN: VIEW BOOKINGS
 @router.get("/")

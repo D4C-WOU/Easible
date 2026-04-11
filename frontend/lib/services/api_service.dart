@@ -84,6 +84,25 @@ class ApiService {
   }
 
   // =========================
+  // 🔐 AUTH PUT
+  // =========================
+  static Future<dynamic> putWithAuth(String endpoint) async {
+    final token = await StorageService.getToken();
+
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    return _handleResponse(response);
+  }
+
+  // =========================
   // 🧠 COMMON RESPONSE HANDLER
   // =========================
   static dynamic _handleResponse(http.Response response) {

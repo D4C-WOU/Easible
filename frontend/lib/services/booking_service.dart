@@ -9,7 +9,11 @@ class BookingService {
     return await ApiService.getWithAuth("/bookings/");
   }
 
+  static Future<List<dynamic>> getMyBookings() async {
+    return await ApiService.getWithAuth("/bookings/my");
+  }
+
   static Future<void> updateBooking(int id, String status) async {
-    await ApiService.postWithAuth("/bookings/$id?status=$status", {});
+    await ApiService.putWithAuth("/bookings/$id?status=$status");
   }
 }
