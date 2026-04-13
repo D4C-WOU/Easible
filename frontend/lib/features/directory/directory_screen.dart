@@ -33,6 +33,8 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
         final data = snapshot.data!;
 
         return ListView.builder(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
           itemCount: data.length,
           itemBuilder: (_, index) {
             final item = data[index];

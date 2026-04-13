@@ -32,12 +32,20 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 20),
 
           PrimaryButton(
+            text: "View Slots",
+            icon: Icons.schedule,
+            onPressed: () => context.go("/slots"),
+          ),
+
+          const SizedBox(height: 12),
+
+          PrimaryButton(
             text: "My Bookings",
             icon: Icons.history,
             onPressed: () => context.go("/my-bookings"),
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           PrimaryButton(
             text: "My Complaints",
@@ -45,7 +53,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () => context.go("/my-complaints"),
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           PrimaryButton(
             text: "Service Requirements",
@@ -53,7 +61,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () => context.go("/services"),
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           PrimaryButton(
             text: "Submit Complaint",

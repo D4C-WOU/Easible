@@ -16,7 +16,7 @@ class PrimaryButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        icon: Icon(icon),
+        icon: Icon(icon, size: 20),
         label: Text(text),
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -24,6 +24,8 @@ class PrimaryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          minimumSize: const Size(0, 50),
         ),
       ),
     );

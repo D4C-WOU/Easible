@@ -17,7 +17,9 @@ class _CrowdWidgetState extends State<CrowdWidget> {
 
   void load() async {
     final res = await CrowdService.getStatus();
-    setState(() => data = res);
+    if (mounted) {
+      setState(() => data = res);
+    }
   }
 
   @override

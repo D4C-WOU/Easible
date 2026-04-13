@@ -4,21 +4,51 @@ import '../../core/widgets/primary_button.dart';
 import '../../core/widgets/app_scaffold.dart';
 
 class ComplaintScreen extends StatefulWidget {
+  const ComplaintScreen({super.key});
+
   @override
   State<ComplaintScreen> createState() => _ComplaintScreenState();
 }
 
 class _ComplaintScreenState extends State<ComplaintScreen> {
   final ctrl = TextEditingController();
+  bool isSubmitting = false;
 
-  void submit() async {
-    await ComplaintService.submit(ctrl.text);
+  @override
+  void dispose() {
+    ctrl.dispose();
+    super.dispose();
+  }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Complaint Submitted")));
+  Future<void> submit() async {
+    if (ctrl.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please enter a complaint")));
+      return;
+    }
 
-    ctrl.clear();
+    setState(() => isSubmitting = true);
+
+    try {
+      await ComplaintService.submit(ctrl.text);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Complaint Submitted")));
+        ctrl.clear();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to submit: ${e.toString()}")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isSubmitting = false);
+      }
+    }
   }
 
   @override
@@ -34,15 +64,19 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               TextField(
                 controller: ctrl,
                 maxLines: 4,
-                decoration: const InputDecoration(labelText: "Enter complaint"),
+                decoration: const InputDecoration(
+                  labelText: "Enter complaint",
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 20),
-
-              PrimaryButton(
-                text: "Submit",
-                icon: Icons.send,
-                onPressed: submit,
-              ),
+              isSubmitting
+                  ? const CircularProgressIndicator()
+                  : PrimaryButton(
+                      text: "Submit",
+                      icon: Icons.send,
+                      onPressed: submit,
+                    ),
             ],
           ),
         ),
