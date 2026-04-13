@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/complaint_service.dart';
+import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/app_scaffold.dart';
 
 class ComplaintScreen extends StatefulWidget {
   @override
@@ -21,20 +23,28 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Complaint Box")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(
-              controller: ctrl,
-              maxLines: 4,
-              decoration: const InputDecoration(labelText: "Enter complaint"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: submit, child: const Text("Submit")),
-          ],
+    return AppScaffold(
+      title: "Complaint Box",
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextField(
+                controller: ctrl,
+                maxLines: 4,
+                decoration: const InputDecoration(labelText: "Enter complaint"),
+              ),
+              const SizedBox(height: 20),
+
+              PrimaryButton(
+                text: "Submit",
+                icon: Icons.send,
+                onPressed: submit,
+              ),
+            ],
+          ),
         ),
       ),
     );

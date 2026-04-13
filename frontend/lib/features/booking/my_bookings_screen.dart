@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/booking_service.dart';
+import '../../core/widgets/status_chip.dart'; // 👈 ADD THIS
 
 class MyBookingsScreen extends StatefulWidget {
   @override
@@ -25,17 +26,6 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     });
   }
 
-  Color getColor(String status) {
-    switch (status) {
-      case "accepted":
-        return Colors.green;
-      case "rejected":
-        return Colors.red;
-      default:
-        return Colors.orange;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,13 +43,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                   child: ListTile(
                     title: Text("Booking #${b["id"]}"),
                     subtitle: Text("Slot ID: ${b["slot_id"]}"),
-                    trailing: Text(
-                      b["status"].toUpperCase(),
-                      style: TextStyle(
-                        color: getColor(b["status"]),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+
+                    // ✅ UPDATED
+                    trailing: StatusChip(b["status"]),
                   ),
                 );
               },

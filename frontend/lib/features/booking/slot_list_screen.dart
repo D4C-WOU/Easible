@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/slot_service.dart';
 import '../../services/booking_service.dart';
+import '../../core/widgets/app_scaffold.dart';
 
 class SlotListScreen extends StatefulWidget {
   @override
@@ -28,30 +29,31 @@ class _SlotListScreenState extends State<SlotListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Available Slots")),
-      body: loading
+    return AppScaffold(
+      title: "Available Slots",
+      child: loading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: slots.length,
               itemBuilder: (_, i) {
                 final s = slots[i];
-                return ListTile(
-                  title: Text("${s["date"]} - ${s["time"]}"),
-                  subtitle: Text("Facility ID: ${s["facility_id"]}"),
-                  trailing: ElevatedButton(
-                    onPressed: s["status"] == "available"
-                        ? () async {
-                            await BookingService.createBooking(s["id"]);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Booking Requested"),
-                              ),
-                            );
-                          }
-                        : null,
-                    child: const Text("Book"),
+                return Card(
+                  child: ListTile(
+                    title: Text("${s["date"]} - ${s["time"]}"),
+                    subtitle: Text("Facility ID: ${s["facility_id"]}"),
+                    trailing: ElevatedButton(
+                      onPressed: s["status"] == "available"
+                          ? () async {
+                              await BookingService.createBooking(s["id"]);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Booking Requested"),
+                                ),
+                              );
+                            }
+                          : null,
+                      child: const Text("Book"),
+                    ),
                   ),
                 );
               },

@@ -1,51 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../services/storage_service.dart';
 import '../directory/directory_screen.dart';
 import 'crowd_widget.dart';
-import 'package:go_router/go_router.dart';
+import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/app_scaffold.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CrowdWidget(),
-
-        const SizedBox(height: 10),
-
-        // 📄 SERVICES
-        ElevatedButton.icon(
-          icon: const Icon(Icons.description),
-          label: const Text("Service Requirements"),
-          onPressed: () => context.go("/services"),
+    return AppScaffold(
+      title: "Home",
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () async {
+            await StorageService.clearToken();
+            context.go("/login");
+          },
         ),
-
-        const SizedBox(height: 10),
-
-        // 📩 COMPLAINT
-        ElevatedButton.icon(
-          icon: const Icon(Icons.feedback),
-          label: const Text("Submit Complaint"),
-          onPressed: () => context.go("/complaint"),
-        ),
-
-        //My Bookings
-        ElevatedButton.icon(
-          icon: const Icon(Icons.history),
-          label: const Text("My Bookings"),
-          onPressed: () => context.go("/my-bookings"),
-        ),
-
-        //My Complaints
-        ElevatedButton.icon(
-          icon: const Icon(Icons.report),
-          label: const Text("My Complaints"),
-          onPressed: () => context.go("/my-complaints"),
-        ),
-
-        const SizedBox(height: 10),
-
-        Expanded(child: DirectoryScreen()),
       ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Welcome 👋", style: Theme.of(context).textTheme.headlineSmall),
+
+          const SizedBox(height: 20),
+
+          CrowdWidget(),
+
+          const SizedBox(height: 20),
+
+          PrimaryButton(
+            text: "My Bookings",
+            icon: Icons.history,
+            onPressed: () => context.go("/my-bookings"),
+          ),
+
+          const SizedBox(height: 10),
+
+          PrimaryButton(
+            text: "My Complaints",
+            icon: Icons.report,
+            onPressed: () => context.go("/my-complaints"),
+          ),
+
+          const SizedBox(height: 10),
+
+          PrimaryButton(
+            text: "Service Requirements",
+            icon: Icons.description,
+            onPressed: () => context.go("/services"),
+          ),
+
+          const SizedBox(height: 10),
+
+          PrimaryButton(
+            text: "Submit Complaint",
+            icon: Icons.feedback,
+            onPressed: () => context.go("/complaint"),
+          ),
+
+          const SizedBox(height: 20),
+
+          Text("Directory", style: Theme.of(context).textTheme.titleLarge),
+
+          const SizedBox(height: 10),
+
+          SizedBox(height: 400, child: DirectoryScreen()),
+        ],
+      ),
     );
   }
 }

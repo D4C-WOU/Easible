@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/complaint_service.dart';
+import '../../core/widgets/status_chip.dart';
+import '../../core/widgets/app_scaffold.dart';
 
 class MyComplaintsScreen extends StatefulWidget {
   @override
@@ -18,40 +20,38 @@ class _MyComplaintsScreenState extends State<MyComplaintsScreen> {
 
   void load() async {
     final res = await ComplaintService.getMyComplaints();
-
     setState(() {
       complaints = res;
       loading = false;
     });
   }
 
-  Color getColor(String status) {
-    return status == "resolved" ? Colors.green : Colors.orange;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("My Complaints")),
-      body: loading
+    return AppScaffold(
+      title: "My Complaints",
+      child: loading
           ? const Center(child: CircularProgressIndicator())
           : complaints.isEmpty
           ? const Center(child: Text("No complaints yet"))
           : ListView.builder(
+              padding: const EdgeInsets.all(12),
               itemCount: complaints.length,
               itemBuilder: (_, i) {
                 final c = complaints[i];
 
-                return Card(
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(blurRadius: 5, color: Colors.black12),
+                    ],
+                  ),
                   child: ListTile(
                     title: Text(c["message"]),
-                    trailing: Text(
-                      c["status"].toUpperCase(),
-                      style: TextStyle(
-                        color: getColor(c["status"]),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    trailing: StatusChip(c["status"]),
                   ),
                 );
               },

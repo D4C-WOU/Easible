@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../services/api_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/auth_service.dart';
+import '../../core/widgets/app_scaffold.dart';
+import '../../core/widgets/primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (res.containsKey("access_token")) {
         await StorageService.saveToken(res["access_token"]);
-
         final role = await AuthService.getRole();
 
         if (!mounted) return;
@@ -42,38 +43,42 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Easible Login")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(
-              controller: emailCtrl,
-              decoration: const InputDecoration(labelText: "Email"),
-            ),
-            TextField(
-              controller: passCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: "Password"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: login, child: const Text("Login")),
-            TextButton(
-              onPressed: () => context.go("/signup"),
-              child: const Text("Create Account"),
-            ),
+    return AppScaffold(
+      title: "Login",
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              TextField(
+                controller: emailCtrl,
+                decoration: const InputDecoration(labelText: "Email"),
+              ),
+              TextField(
+                controller: passCtrl,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: "Password"),
+              ),
+              const SizedBox(height: 20),
 
-            const Spacer(),
+              PrimaryButton(text: "Login", icon: Icons.login, onPressed: login),
 
-            // 🚨 Emergency Bypass
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: () => context.go("/panic"),
-              icon: const Icon(Icons.warning),
-              label: const Text("Emergency SOS"),
-            ),
-          ],
+              TextButton(
+                onPressed: () => context.go("/signup"),
+                child: const Text("Create Account"),
+              ),
+
+              const SizedBox(height: 20),
+
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                onPressed: () => context.go("/panic"),
+                icon: const Icon(Icons.warning),
+                label: const Text("Emergency SOS"),
+              ),
+            ],
+          ),
         ),
       ),
     );

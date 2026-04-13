@@ -11,6 +11,12 @@ class StorageService {
     return await _storage.read(key: "jwt");
   }
 
+  // ✅ Better version (clear only token)
+  static Future<void> clearToken() async {
+    await _storage.delete(key: "jwt");
+  }
+
+  // (optional) clear everything
   static Future<void> clear() async {
     await _storage.deleteAll();
   }

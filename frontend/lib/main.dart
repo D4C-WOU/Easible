@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'core/theme.dart';
 import 'routes/app_router.dart';
+import 'core/theme.dart'; // ✅ ADD THIS
 
 void main() {
-  runApp(const EasibleApp());
+  runApp(MyApp());
 }
 
-class EasibleApp extends StatelessWidget {
-  const EasibleApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      title: 'Easible',
+
+      // ✅ USE CENTRALIZED THEME
       theme: AppTheme.lightTheme,
+
       routerConfig: router,
     );
   }
