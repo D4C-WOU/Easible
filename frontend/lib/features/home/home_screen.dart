@@ -20,63 +20,61 @@ class HomeScreen extends StatelessWidget {
           },
         ),
       ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Welcome 👋", style: Theme.of(context).textTheme.headlineSmall),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Welcome 👋",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
+            CrowdWidget(),
 
-          CrowdWidget(),
+            const SizedBox(height: 20),
+            PrimaryButton(
+              text: "View Slots",
+              icon: Icons.schedule,
+              onPressed: () => context.go("/slots"),
+            ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 12),
+            PrimaryButton(
+              text: "My Bookings",
+              icon: Icons.history,
+              onPressed: () => context.go("/my-bookings"),
+            ),
 
-          PrimaryButton(
-            text: "View Slots",
-            icon: Icons.schedule,
-            onPressed: () => context.go("/slots"),
-          ),
+            const SizedBox(height: 12),
+            PrimaryButton(
+              text: "My Complaints",
+              icon: Icons.report,
+              onPressed: () => context.go("/my-complaints"),
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            PrimaryButton(
+              text: "Service Requirements",
+              icon: Icons.description,
+              onPressed: () => context.go("/requirements"),
+            ),
 
-          PrimaryButton(
-            text: "My Bookings",
-            icon: Icons.history,
-            onPressed: () => context.go("/my-bookings"),
-          ),
+            const SizedBox(height: 12),
+            PrimaryButton(
+              text: "Submit Complaint",
+              icon: Icons.feedback,
+              onPressed: () => context.go("/complaint"),
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 20),
+            Text("Directory", style: Theme.of(context).textTheme.titleLarge),
 
-          PrimaryButton(
-            text: "My Complaints",
-            icon: Icons.report,
-            onPressed: () => context.go("/my-complaints"),
-          ),
+            const SizedBox(height: 10),
 
-          const SizedBox(height: 12),
-
-          PrimaryButton(
-            text: "Service Requirements",
-            icon: Icons.description,
-            onPressed: () => context.go("/services"),
-          ),
-
-          const SizedBox(height: 12),
-
-          PrimaryButton(
-            text: "Submit Complaint",
-            icon: Icons.feedback,
-            onPressed: () => context.go("/complaint"),
-          ),
-
-          const SizedBox(height: 20),
-
-          Text("Directory", style: Theme.of(context).textTheme.titleLarge),
-
-          const SizedBox(height: 10),
-
-          SizedBox(height: 400, child: DirectoryScreen()),
-        ],
+            SizedBox(height: 300, child: DirectoryScreen()),
+          ],
+        ),
       ),
     );
   }

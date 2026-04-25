@@ -44,7 +44,6 @@ class _MyComplaintsScreenState extends State<MyComplaintsScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "My Complaints",
-      scrollable: false,
       child: loading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty

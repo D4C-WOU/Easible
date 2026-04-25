@@ -33,13 +33,22 @@ def get_nearby(
     results = []
 
     for f in facilities:
-        distance = haversine(lat, lon, f.latitude, f.longitude)
+        # handle different column names (lat/lng)
+        f_lat = getattr(f, 'lat', None) or getattr(f, 'latitude', None)
+        f_lng = getattr(f, 'lng', None) or getattr(f, 'longitude', None)
+        if f_lat is None or f_lng is None:
+            continue
+
+        distance = haversine(lat, lon, f_lat, f_lng)
 
         results.append({
             'id': f.id,
             'name': f.name,
-            'type': f.type,
-            'distance': round(distance, 2)
+            'type': getattr(f, 'type', None) or getattr(f, 'category_id', None),
+            'distance': round(distance, 2),
+            'lat': f_lat,
+            'lng': f_lng,
+            'phone': getattr(f, 'phone', None),
         })
 
     # ✅ sort AFTER loop

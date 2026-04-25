@@ -60,7 +60,7 @@ class _AdminBookingScreenState extends State<AdminBookingScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "Manage Bookings",
-      scrollable: false,
+
       child: loading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty

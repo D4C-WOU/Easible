@@ -25,6 +25,7 @@ class _SlotListScreenState extends State<SlotListScreen> {
   Future<void> fetchSlots() async {
     try {
       final res = await SlotService.getSlots();
+
       if (mounted) {
         setState(() {
           slots = (res as List).cast<Map<String, dynamic>>();
@@ -44,6 +45,7 @@ class _SlotListScreenState extends State<SlotListScreen> {
   Future<void> _bookSlot(int slotId) async {
     try {
       await BookingService.createBooking(slotId);
+
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -62,7 +64,6 @@ class _SlotListScreenState extends State<SlotListScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "Available Slots",
-      scrollable: false,
       child: loading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty
@@ -73,15 +74,27 @@ class _SlotListScreenState extends State<SlotListScreen> {
               itemCount: slots.length,
               itemBuilder: (_, i) {
                 final s = slots[i];
-                final date = s["date"]?.toString() ?? "N/A";
-                final time = s["time"]?.toString() ?? "N/A";
+
+                final end = s["end_time"]?.toString() ?? "";
+
+                final start = s["start_time"]?.toString() ?? "";
+
+                String date = "N/A";
+                String time = "N/A";
+
+                if (start.contains(" ")) {
+                  final parts = start.split(" ");
+                  if (parts.length >= 2) {
+                    date = parts[0];
+                    time = parts[1];
+                  }
+                }
+
+                final isAvailable = s["available"] == 1;
                 final facilityId = s["facility_id"]?.toString() ?? "?";
-                final status = s["status"]?.toString() ?? "unknown";
                 final slotId = s["id"];
 
                 if (slotId == null) return const SizedBox.shrink();
-
-                final isAvailable = status == "available";
 
                 return Card(
                   child: Padding(
@@ -94,14 +107,13 @@ class _SlotListScreenState extends State<SlotListScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          "Facility ID: $facilityId",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                        Text("Facility ID: $facilityId"),
                         const SizedBox(height: 8),
                         Text(
-                          "Status: $status",
-                          style: Theme.of(context).textTheme.bodySmall,
+                          isAvailable ? "Available" : "Booked",
+                          style: TextStyle(
+                            color: isAvailable ? Colors.green : Colors.red,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         PrimaryButton(
@@ -109,7 +121,7 @@ class _SlotListScreenState extends State<SlotListScreen> {
                           icon: Icons.shopping_cart,
                           onPressed: isAvailable
                               ? () => _bookSlot(slotId)
-                              : () {},
+                              : () {}, // NEVER NULL
                         ),
                       ],
                     ),

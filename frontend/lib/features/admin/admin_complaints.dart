@@ -59,7 +59,7 @@ class _AdminComplaintsState extends State<AdminComplaints> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "Complaints",
-      scrollable: false,
+
       child: loading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty

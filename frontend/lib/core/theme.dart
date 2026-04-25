@@ -9,7 +9,14 @@ class AppTheme {
   static const _errorColor = Color(0xFFC62828); // Professional red
   static const _warningColor = Color(0xFFF57C00); // Amber
   static const _surfaceColor = Color(0xFFFFFFFF);
-  static const _backgroundColor = Color(0xFFF5F7FA); // Light gray-blue
+  static const _backgroundColor = Color(0xFFF5ECD2); // Professional beige
+
+  // Emergency mode theme
+  static const emergencyRed = Color(0xFFB71C1C); // Strong red for emergency
+  static const emergencyBackground = Color(0xFFFFEBEE); // Light red background
+
+  // App name color
+  static const appNameColor = Color(0xFF8D6748); // Deep beige/brown for logo
 
   static const _textTheme = TextTheme(
     displayLarge: TextStyle(

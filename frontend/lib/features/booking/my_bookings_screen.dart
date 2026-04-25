@@ -44,7 +44,6 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "My Bookings",
-      scrollable: false,
       child: loading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty

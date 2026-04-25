@@ -67,6 +67,14 @@ class AdminDashboard extends StatelessWidget {
             const SizedBox(height: 12),
 
             PrimaryButton(
+              text: "Booking Requests",
+              icon: Icons.pending_actions,
+              onPressed: () => context.go('/admin/booking-requests'),
+            ),
+
+            const SizedBox(height: 12),
+
+            PrimaryButton(
               text: "View Complaints",
               icon: Icons.report_problem,
               onPressed: () => context.go("/admin/complaints"),
