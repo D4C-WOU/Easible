@@ -20,13 +20,15 @@ def create_booking(
     if not slot:
         raise HTTPException(status_code=404, detail="Slot not found")
 
-    if slot.status != "available":
+    if not slot.available:
         raise HTTPException(status_code=400, detail="Slot already booked")
 
     new_booking = Booking(
         user_id=user["user_id"],
         slot_id=booking.slot_id,
     )
+
+    slot.available = False  # ✅ FIX
 
     db.add(new_booking)
     db.commit()
@@ -72,7 +74,7 @@ def update_booking(
     # 🔄 Update slot status if accepted
     if status == "accepted":
         slot = db.query(Slot).filter(Slot.id == booking.slot_id).first()
-        slot.status = "booked"
+        slot.available = False
 
     db.commit()
     return {"message": "Updated"}

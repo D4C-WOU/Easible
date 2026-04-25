@@ -50,6 +50,8 @@ class _SlotListScreenState extends State<SlotListScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text("Booking Requested")));
+
+        await fetchSlots(); // ✅ refresh list
       }
     } catch (e) {
       if (mounted) {
@@ -82,15 +84,16 @@ class _SlotListScreenState extends State<SlotListScreen> {
                 String date = "N/A";
                 String time = "N/A";
 
-                if (start.contains(" ")) {
-                  final parts = start.split(" ");
+                if (start.contains("T")) {
+                  final parts = start.split("T");
                   if (parts.length >= 2) {
                     date = parts[0];
-                    time = parts[1];
+                    time = parts[1].substring(0, 5); // HH:MM only
                   }
                 }
 
-                final isAvailable = s["available"] == 1;
+                final isAvailable =
+                    s["available"] == true || s['available'] == 1;
                 final facilityId = s["facility_id"]?.toString() ?? "?";
                 final slotId = s["id"];
 
