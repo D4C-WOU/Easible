@@ -3,22 +3,29 @@ import 'storage_service.dart';
 
 class AuthService {
   static Future<String?> getRole() async {
-    final token = await StorageService.getToken();
+    try {
+      final token = await StorageService.getToken();
 
-    if (token == null) return null;
+      if (token == null || token.isEmpty) return null;
 
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-
-    return decodedToken["role"];
+      final decodedToken = JwtDecoder.decode(token);
+      return decodedToken["role"]?.toString();
+    } catch (_) {
+      return null;
+    }
   }
 
   static Future<int?> getUserId() async {
-    final token = await StorageService.getToken();
+    try {
+      final token = await StorageService.getToken();
 
-    if (token == null) return null;
+      if (token == null || token.isEmpty) return null;
 
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-
-    return decodedToken["user_id"];
+      final decodedToken = JwtDecoder.decode(token);
+      final userId = decodedToken["user_id"];
+      return userId is int ? userId : int.tryParse(userId.toString());
+    } catch (_) {
+      return null;
+    }
   }
 }

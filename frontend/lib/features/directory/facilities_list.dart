@@ -107,10 +107,12 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                 controller: nameCtl,
                 decoration: const InputDecoration(labelText: 'Name'),
               ),
+              const SizedBox(height: 8),
               TextField(
                 controller: phoneCtl,
                 decoration: const InputDecoration(labelText: 'Mobile'),
               ),
+              const SizedBox(height: 8),
               TextField(
                 controller: timeCtl,
                 decoration: const InputDecoration(labelText: 'Preferred time'),
@@ -130,11 +132,9 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                   phoneCtl.text,
                   timeCtl.text,
                 );
-
                 Navigator.pop(dctx);
-
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Booking request sent')),
+                  const SnackBar(content: Text('Booking request sent.')),
                 );
               },
               child: const Text('Send'),
@@ -189,12 +189,12 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
 
                       items: [
                         const DropdownMenuItem(
-                          value: "ALL",
-                          child: Text("All"),
+                          value: 'ALL',
+                          child: Text('All'),
                         ),
-                        ...states.map((s) {
-                          return DropdownMenuItem(value: s, child: Text(s));
-                        }).toList(),
+                        ...states.map(
+                          (s) => DropdownMenuItem(value: s, child: Text(s)),
+                        ),
                       ],
 
                       onChanged: (val) {
@@ -248,9 +248,7 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 6),
-
                               if (desc.isNotEmpty) Text(desc),
-
                               if (address.trim().isNotEmpty) ...[
                                 const SizedBox(height: 6),
                                 Text(
@@ -258,14 +256,30 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               ],
-
-                              const SizedBox(height: 12),
-
+                              const SizedBox(height: 10),
                               Row(
                                 children: [
+                                  Chip(
+                                    label: Text(
+                                      'Crowd: ${f['crowd_level'] ?? 'Moderate'}',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Chip(
+                                    label: Text(
+                                      'Wait: ${f['waiting_time'] ?? '25 min'}',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
                                   ElevatedButton.icon(
-                                    icon: const Icon(Icons.map),
-                                    label: const Text('Directions'),
+                                    icon: const Icon(Icons.map_outlined),
+                                    label: const Text('Navigate'),
                                     onPressed: lat != null && lng != null
                                         ? () => MapService.openDirections(
                                             currentLat: 0,
@@ -276,7 +290,6 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                                           )
                                         : null,
                                   ),
-                                  const SizedBox(width: 8),
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.call),
                                     label: const Text('Call'),
@@ -286,10 +299,10 @@ class _FacilitiesListScreenState extends State<FacilitiesListScreen> {
                                           )
                                         : null,
                                   ),
-                                  const SizedBox(width: 8),
-                                  ElevatedButton(
+                                  ElevatedButton.icon(
+                                    icon: const Icon(Icons.calendar_today),
+                                    label: const Text('Book'),
                                     onPressed: _openBookingDialog,
-                                    child: const Text('Request Booking'),
                                   ),
                                 ],
                               ),

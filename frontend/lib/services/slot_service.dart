@@ -8,4 +8,8 @@ class SlotService {
   static Future<void> createSlot(Map<String, dynamic> data) async {
     await ApiService.postWithAuth("/slots/create", data);
   }
+
+  static Future<void> deleteSlot(int slotId) async {
+    await ApiService.deleteWithAuth("/slots/$slotId");
+  }
 }

@@ -47,10 +47,31 @@ class _CrowdWidgetState extends State<CrowdWidget> {
     }
 
     return Card(
-      child: ListTile(
-        title: Text("Crowd Level: ${data!["crowd_level"] ?? "N/A"}"),
-        subtitle: Text(
-          "${data!["booked_slots"] ?? 0}/${data!["total_slots"] ?? 0} slots booked",
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Crowd status',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Current visitors: ${data!['booked_slots'] ?? 0}',
+                  ),
+                ),
+                Chip(
+                  label: Text(data!['crowd_level']?.toString() ?? 'Moderate'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text('Average waiting time: ${data!['total_slots'] ?? 0} mins'),
+          ],
         ),
       ),
     );

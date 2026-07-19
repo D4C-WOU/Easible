@@ -8,12 +8,14 @@ import '../features/admin/admin_booking_screen.dart';
 import '../features/admin/admin_complaints.dart';
 import '../features/admin/create_slot_screen.dart';
 import '../features/admin/booking_requests.dart';
+import '../features/admin/admin_panic_alerts.dart';
 import '../features/services/requirement_screen.dart';
 import '../features/booking/slot_list_screen.dart';
 import '../features/booking/my_bookings_screen.dart';
 import '../features/feedback/complaint_screen.dart';
 import '../features/feedback/my_complaint_screen.dart';
 import '../features/directory/facilities_list.dart';
+import '../features/directory/directory_screen.dart';
 
 import '../services/storage_service.dart';
 import '../services/auth_service.dart';
@@ -54,6 +56,7 @@ final GoRouter router = GoRouter(
       builder: (_, __) => const RequirementScreen(),
     ),
     GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
+    GoRoute(path: '/directory', builder: (_, __) => const DirectoryScreen()),
     GoRoute(path: '/slots', builder: (_, __) => SlotListScreen()),
     GoRoute(path: "/my-bookings", builder: (_, __) => MyBookingsScreen()),
     GoRoute(path: "/my-complaints", builder: (_, __) => MyComplaintsScreen()),
@@ -82,6 +85,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: "booking-requests",
           builder: (_, __) => BookingRequestsPage(),
+        ),
+        GoRoute(
+          path: "panic-alerts",
+          builder: (_, __) => const AdminPanicAlertsScreen(),
         ),
         GoRoute(path: "complaints", builder: (_, __) => AdminComplaints()),
       ],

@@ -102,6 +102,21 @@ class ApiService {
     return _handleResponse(response);
   }
 
+  static Future<dynamic> deleteWithAuth(String endpoint) async {
+    final token = await StorageService.getToken();
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    final response = await http.delete(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    return _handleResponse(response);
+  }
+
   // =========================
   // 🧠 COMMON RESPONSE HANDLER
   // =========================

@@ -1,10 +1,19 @@
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Query, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user, get_current_admin
 from app.models.facility import Facility
+from app.models.panic import PanicAlert
+from app.models.user import User
 from math import radians, cos, sin, asin, sqrt
+from pydantic import BaseModel
+import datetime
 
 router = APIRouter(prefix='/panic', tags=['Panic'])
+
+
+class PanicCreate(BaseModel):
+    latitude: float
+    longitude: float
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -51,8 +60,47 @@ def get_nearby(
             'phone': getattr(f, 'phone', None),
         })
 
-    # ✅ sort AFTER loop
+    # sort AFTER loop
     results.sort(key=lambda x: x['distance'])
 
-    # ✅ return AFTER loop
+    # return AFTER loop
     return results[:5]
+
+
+@router.post('/')
+def trigger_panic(
+    payload: PanicCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    new_alert = PanicAlert(
+        user_id=user["user_id"],
+        latitude=payload.latitude,
+        longitude=payload.longitude,
+        created_at=datetime.datetime.utcnow()
+    )
+    db.add(new_alert)
+    db.commit()
+    db.refresh(new_alert)
+    return new_alert
+
+
+@router.get('/')
+def get_panic_alerts(
+    db: Session = Depends(get_db),
+    admin=Depends(get_current_admin)
+):
+    alerts = db.query(PanicAlert).order_by(PanicAlert.created_at.desc()).all()
+    results = []
+    for a in alerts:
+        u = db.query(User).filter(User.id == a.user_id).first()
+        results.append({
+            "id": a.id,
+            "user_id": a.user_id,
+            "user_name": u.name if u else "Unknown User",
+            "user_email": u.email if u else "",
+            "latitude": a.latitude,
+            "longitude": a.longitude,
+            "created_at": a.created_at
+        })
+    return results

@@ -9,6 +9,7 @@ class AppScaffold extends StatelessWidget {
   final Widget? customTitle;
   final Color? appBarColor;
   final Color? appBarTitleColor;
+  final bool showLogo;
 
   const AppScaffold({
     super.key,
@@ -18,6 +19,7 @@ class AppScaffold extends StatelessWidget {
     this.customTitle,
     this.appBarColor,
     this.appBarTitleColor,
+    this.showLogo = true,
   });
 
   @override
@@ -31,17 +33,21 @@ class AppScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor:
             appBarColor ?? Theme.of(context).appBarTheme.backgroundColor,
+        surfaceTintColor: Colors.transparent,
+        titleSpacing: 0,
         title: Row(
           children: [
-            SizedBox(
-              height: 70,
-              width: 70,
-              child: SvgPicture.asset(
-                'assets/images/easible_logo.svg',
-                colorFilter: ColorFilter.mode(titleColor, BlendMode.srcIn),
+            if (showLogo) ...[
+              SizedBox(
+                height: 54,
+                width: 54,
+                child: SvgPicture.asset(
+                  'assets/images/easible_logo.svg',
+                  colorFilter: ColorFilter.mode(titleColor, BlendMode.srcIn),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
+              const SizedBox(width: 10),
+            ],
             Expanded(
               child: Align(
                 alignment: Alignment.centerLeft,
@@ -59,8 +65,6 @@ class AppScaffold extends StatelessWidget {
         ),
         actions: actions,
       ),
-
-      // ✅ NO AUTO SCROLL HERE
       body: SafeArea(
         child: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
