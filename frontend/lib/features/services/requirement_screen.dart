@@ -12,6 +12,8 @@ class RequirementScreen extends StatefulWidget {
 class _RequirementScreenState extends State<RequirementScreen> {
   List<dynamic> requirements = [];
   bool loading = true;
+  String error = '';
+  String _search = '';
 
   @override
   void initState() {
@@ -27,10 +29,10 @@ class _RequirementScreenState extends State<RequirementScreen> {
         requirements = res;
         loading = false;
       });
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
       setState(() {
-        requirements = [];
+        error = e.toString();
         loading = false;
       });
     }
@@ -38,71 +40,185 @@ class _RequirementScreenState extends State<RequirementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final filtered = _search.isEmpty
+        ? requirements
+        : requirements.where((r) {
+            final name = r['name']?.toString().toLowerCase() ?? '';
+            final desc = r['description']?.toString().toLowerCase() ?? '';
+            final q = _search.toLowerCase();
+            return name.contains(q) || desc.contains(q);
+          }).toList();
+
     return AppScaffold(
-      title: 'Requirements',
+      title: 'Service Requirements',
       child: loading
           ? const Center(child: CircularProgressIndicator())
-          : requirements.isEmpty
-          ? const Center(child: Text('No requirements found'))
-          : ListView.builder(
-              itemCount: requirements.length,
-              itemBuilder: (_, i) {
-                final r = requirements[i];
-                final docs =
-                    r['documents']?.toString() ??
-                    'Please check with the nearest service centre.';
-                final processingTime =
-                    r['processing_time']?.toString() ?? 'Same day';
-                final fees =
-                    r['fees']?.toString() ?? 'Government fees may apply';
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          r['name'] ?? 'Requirement',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          r['description'] ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEEF7FF),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Documents required',
-                                style: Theme.of(context).textTheme.titleSmall,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(docs),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            Chip(label: Text('Processing: $processingTime')),
-                            Chip(label: Text('Fees: $fees')),
-                          ],
-                        ),
-                      ],
+          : error.isNotEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 12),
+                  Text(error, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        loading = true;
+                        error = '';
+                      });
+                      load();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                // Search bar
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search services…',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                );
-              },
+                  onChanged: (v) => setState(() => _search = v),
+                ),
+                const SizedBox(height: 10),
+
+                Expanded(
+                  child: filtered.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No results for "$_search".',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {
+                              loading = true;
+                              error = '';
+                            });
+                            await load();
+                          },
+                          child: ListView.builder(
+                            itemCount: filtered.length,
+                            itemBuilder: (_, i) {
+                              final r = filtered[i];
+                              final name = r['name']?.toString() ?? 'Service';
+                              final description =
+                                  r['description']?.toString() ?? '';
+                              final documents =
+                                  r['documents']?.toString() ??
+                                  'Check with the nearest service centre.';
+
+                              return Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Service name
+                                      Text(
+                                        name,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
+                                      ),
+
+                                      // Description
+                                      if (description.isNotEmpty) ...[
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          description,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                        ),
+                                      ],
+
+                                      const SizedBox(height: 12),
+
+                                      // Documents required
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFEEF7FF),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.description_outlined,
+                                                  size: 16,
+                                                  color: Color(0xFF0F4C81),
+                                                ),
+                                                SizedBox(width: 6),
+                                                Text(
+                                                  'Documents Required',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF0F4C81),
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Wrap(
+                                              spacing: 6,
+                                              runSpacing: 4,
+                                              children: documents
+                                                  .split(',')
+                                                  .map((d) => d.trim())
+                                                  .where((d) => d.isNotEmpty)
+                                                  .map(
+                                                    (d) => Chip(
+                                                      label: Text(
+                                                        d,
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      side: const BorderSide(
+                                                        color: Color(
+                                                          0xFFBDD5F0,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
             ),
     );
   }

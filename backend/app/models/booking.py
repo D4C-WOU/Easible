@@ -8,3 +8,7 @@ class Booking(Base):
   user_id = Column(Integer, ForeignKey('users.id'))
   slot_id = Column(Integer, ForeignKey('slots.id'))
   status = Column(String(20), default = 'pending')
+  facility_id = Column(
+    Integer,
+    ForeignKey("facilities.id")
+)

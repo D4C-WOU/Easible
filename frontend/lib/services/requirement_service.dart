@@ -18,6 +18,6 @@ class RequirementService {
       'preferred_time': time,
     };
 
-    await ApiService.post('/booking-requests/', payload).catchError((_) {});
+    await ApiService.post("/booking-requests/", payload);
   }
 }

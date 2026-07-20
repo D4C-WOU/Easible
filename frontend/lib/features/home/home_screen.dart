@@ -7,6 +7,14 @@ import '../../services/storage_service.dart';
 import '../directory/directory_screen.dart';
 import 'crowd_widget.dart';
 
+String greeting() {
+  final h = DateTime.now().hour;
+
+  if (h < 12) return "Good Morning";
+  if (h < 17) return "Good Afternoon";
+  return "Good Evening";
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -88,10 +96,7 @@ class HomeScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Good morning, citizen',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
+                          Text("${greeting()}, Citizen"),
                           const SizedBox(height: 4),
                           Text(
                             'Plan visits, check queue status, and reach the right public office without extra trips.',
@@ -123,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '2 active services, 1 upcoming appointment, and emergency support available.',
+                            "Browse services, book appointments and submit complaints from one place.",
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -211,15 +216,6 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 8),
             const SizedBox(height: 360, child: DirectoryScreen()),
             const SizedBox(height: 12),
-            InfoCard(
-              title: 'Need help before you leave?',
-              subtitle:
-                  'Check requirements, expected waiting time, and the nearest office in one place.',
-              icon: Icons.support_agent_outlined,
-              color: const Color(0xFF0F4C81),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: null,
-            ),
           ],
         ),
       ),

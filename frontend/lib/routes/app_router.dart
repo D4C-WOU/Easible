@@ -16,7 +16,7 @@ import '../features/feedback/complaint_screen.dart';
 import '../features/feedback/my_complaint_screen.dart';
 import '../features/directory/facilities_list.dart';
 import '../features/directory/directory_screen.dart';
-
+import '../core/widgets/app_scaffold.dart';
 import '../services/storage_service.dart';
 import '../services/auth_service.dart';
 
@@ -56,7 +56,12 @@ final GoRouter router = GoRouter(
       builder: (_, __) => const RequirementScreen(),
     ),
     GoRoute(path: '/complaint', builder: (_, __) => ComplaintScreen()),
-    GoRoute(path: '/directory', builder: (_, __) => const DirectoryScreen()),
+    GoRoute(
+      path: '/directory',
+      builder: (_, __) =>
+          const AppScaffold(title: 'Directory', child: DirectoryScreen()),
+    ),
+
     GoRoute(path: '/slots', builder: (_, __) => SlotListScreen()),
     GoRoute(path: "/my-bookings", builder: (_, __) => MyBookingsScreen()),
     GoRoute(path: "/my-complaints", builder: (_, __) => MyComplaintsScreen()),
@@ -91,6 +96,11 @@ final GoRouter router = GoRouter(
           builder: (_, __) => const AdminPanicAlertsScreen(),
         ),
         GoRoute(path: "complaints", builder: (_, __) => AdminComplaints()),
+        GoRoute(
+          path: "bookings/confirmed",
+          builder: (_, __) =>
+              const AdminBookingScreen(filterStatus: 'accepted'),
+        ),
       ],
     ),
   ],

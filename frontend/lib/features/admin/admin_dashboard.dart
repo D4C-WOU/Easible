@@ -1,49 +1,109 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/widgets/app_scaffold.dart';
+import '../../services/api_service.dart';
 import '../../services/storage_service.dart';
 
-class AdminDashboard extends StatelessWidget {
+class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
 
   @override
+  State<AdminDashboard> createState() => _AdminDashboardState();
+}
+
+class _AdminDashboardState extends State<AdminDashboard> {
+  Map<String, dynamic> stats = {
+    'confirmed_bookings': '—',
+    'open_complaints': '—',
+    'panic_alerts': '—',
+    'pending_requests': '—',
+  };
+  bool loadingStats = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final res = await ApiService.getWithAuth('/admin/stats');
+      if (!mounted) return;
+      setState(() {
+        stats = {
+          'confirmed_bookings': res['confirmed_bookings']?.toString() ?? '0',
+          'open_complaints': res['open_complaints']?.toString() ?? '0',
+          'panic_alerts': res['panic_alerts']?.toString() ?? '0',
+          'pending_requests': res['pending_requests']?.toString() ?? '0',
+        };
+        loadingStats = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => loadingStats = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cards = <_AdminAction>[
-      const _AdminAction(
-        'Appointments Today',
-        '14',
+    final cards = <_AdminCard>[
+      _AdminCard(
+        'Confirmed Bookings',
+        stats['confirmed_bookings'].toString(),
         Icons.calendar_today,
-        '/admin/bookings',
-        Color(0xFF0F4C81),
+        '/admin/bookings/confirmed',
+        const Color(0xFF0F4C81),
       ),
-      const _AdminAction(
+      _AdminCard(
         'Open Complaints',
-        '8',
+        stats['open_complaints'].toString(),
         Icons.report_problem,
         '/admin/complaints',
-        Color(0xFFF9A825),
+        const Color(0xFFF9A825),
       ),
-      const _AdminAction(
+      _AdminCard(
         'Emergency Alerts',
-        '3',
+        stats['panic_alerts'].toString(),
         Icons.warning_amber_rounded,
         '/admin/panic-alerts',
-        Color(0xFFD32F2F),
+        const Color(0xFFD32F2F),
       ),
-      const _AdminAction(
+      _AdminCard(
         'Pending Requests',
-        '6',
+        stats['pending_requests'].toString(),
         Icons.pending_actions,
         '/admin/booking-requests',
-        Color(0xFF2E7D32),
+        const Color(0xFF2E7D32),
       ),
     ];
 
     return AppScaffold(
       title: 'Admin Command Center',
       actions: [
+        if (loadingStats)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: 'Refresh stats',
+          onPressed: () {
+            setState(() => loadingStats = true);
+            _loadStats();
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.logout_outlined),
+          tooltip: 'Logout',
           onPressed: () async {
             await StorageService.clearToken();
             if (!context.mounted) return;
@@ -62,12 +122,13 @@ class AdminDashboard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Operations overview',
+                      'Operations Overview',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Monitor service demand, appointment flow, and response readiness from one trusted control center.',
+                      'Monitor service demand, complaints, and emergency alerts '
+                      'from one trusted control centre.',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -75,6 +136,8 @@ class AdminDashboard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+
+            // ── Live Stat Cards ──────────────────────────────────────────
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -85,11 +148,11 @@ class AdminDashboard extends StatelessWidget {
                 mainAxisSpacing: 12,
                 childAspectRatio: 1.08,
               ),
-              itemBuilder: (context, index) {
-                final card = cards[index];
+              itemBuilder: (context, i) {
+                final c = cards[i];
                 return Card(
                   child: InkWell(
-                    onTap: () => context.go(card.route),
+                    onTap: () => context.go(c.route),
                     borderRadius: BorderRadius.circular(16),
                     child: Padding(
                       padding: const EdgeInsets.all(14),
@@ -97,22 +160,31 @@ class AdminDashboard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
-                            backgroundColor: card.color.withValues(alpha: 0.14),
-                            child: Icon(card.icon, color: card.color),
+                            backgroundColor: c.color.withValues(alpha: 0.14),
+                            child: Icon(c.icon, color: c.color),
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            card.title,
+                            c.title,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            card.value,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          loadingStats
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  c.value,
+                                  style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    color: c.color,
+                                  ),
+                                ),
                         ],
                       ),
                     ),
@@ -120,34 +192,30 @@ class AdminDashboard extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 16),
             Text('Management', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
-            _AdminTile(
+            _Tile(
               'Appointment Management',
               Icons.event_available,
               '/admin/bookings',
             ),
-            _AdminTile(
-              'Facility Management',
-              Icons.location_city,
+            _Tile(
+              'Create Service Slot',
+              Icons.add_box_outlined,
               '/admin/create-slot',
             ),
-            _AdminTile(
+            _Tile(
               'Booking Requests',
               Icons.pending_actions,
               '/admin/booking-requests',
             ),
-            _AdminTile('Complaints', Icons.report_problem, '/admin/complaints'),
-            _AdminTile(
+            _Tile('Complaints', Icons.report_problem, '/admin/complaints'),
+            _Tile(
               'Emergency Alerts',
               Icons.warning_amber_rounded,
               '/admin/panic-alerts',
-            ),
-            _AdminTile(
-              'Analytics',
-              Icons.analytics_outlined,
-              '/admin/bookings',
             ),
           ],
         ),
@@ -156,20 +224,17 @@ class AdminDashboard extends StatelessWidget {
   }
 }
 
-class _AdminAction {
-  final String title;
-  final String value;
+class _AdminCard {
+  final String title, value, route;
   final IconData icon;
-  final String route;
   final Color color;
-  const _AdminAction(this.title, this.value, this.icon, this.route, this.color);
+  const _AdminCard(this.title, this.value, this.icon, this.route, this.color);
 }
 
-class _AdminTile extends StatelessWidget {
-  final String title;
+class _Tile extends StatelessWidget {
+  final String title, route;
   final IconData icon;
-  final String route;
-  const _AdminTile(this.title, this.icon, this.route, {super.key});
+  const _Tile(this.title, this.icon, this.route, {super.key});
 
   @override
   Widget build(BuildContext context) {

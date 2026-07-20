@@ -72,4 +72,4 @@ def update_request(
     req.status = status
     db.commit()
 
-    return {"message": "Booking request updated"}
+    return {"message": "Booking request updated"}

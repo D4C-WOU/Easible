@@ -3,6 +3,8 @@ import '../../core/widgets/app_scaffold.dart';
 import '../../services/booking_request_service.dart';
 
 class BookingRequestsPage extends StatefulWidget {
+  const BookingRequestsPage({super.key});
+
   @override
   State<BookingRequestsPage> createState() => _BookingRequestsPageState();
 }
@@ -30,13 +32,15 @@ class _BookingRequestsPageState extends State<BookingRequestsPage> {
             return Center(child: Text('Error: ${snap.error}'));
           }
           final list = snap.data ?? [];
-          if (list.isEmpty)
+          if (list.isEmpty) {
             return const Center(child: Text('No booking requests'));
+          }
           return ListView.builder(
             shrinkWrap: true,
             itemCount: list.length,
             itemBuilder: (_, i) {
               final r = list[i];
+              final status = r['status']?.toString() ?? 'pending';
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -44,7 +48,7 @@ class _BookingRequestsPageState extends State<BookingRequestsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        r['name'] ?? 'Unknown',
+                        r['name']?.toString() ?? 'Unknown',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 4),
@@ -55,6 +59,18 @@ class _BookingRequestsPageState extends State<BookingRequestsPage> {
                       Text(
                         'Category: ${r['category_name'] ?? 'General'}',
                         style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Status: ${status.toUpperCase()}',
+                        style: TextStyle(
+                          color: status == 'approved' || status == 'completed'
+                              ? Colors.green
+                              : status == 'rejected'
+                              ? Colors.red
+                              : Colors.orange,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Row(

@@ -19,6 +19,8 @@ class _PanicScreenState extends State<PanicScreen> {
   bool triggering = false;
   String error = '';
   String statusMessage = '';
+  String? referenceId;
+  String? nearestFacilityName;
   Position? _currentPosition;
 
   @override
@@ -39,6 +41,10 @@ class _PanicScreenState extends State<PanicScreen> {
       setState(() {
         facilities = (res as List).cast<Map<String, dynamic>>();
         loading = false;
+        // Pre-set nearest facility name for status message
+        if (facilities.isNotEmpty) {
+          nearestFacilityName = facilities.first['name']?.toString();
+        }
       });
     } catch (_) {
       if (!mounted) return;
@@ -60,19 +66,34 @@ class _PanicScreenState extends State<PanicScreen> {
     try {
       final position = await LocationService.getLocation();
       _currentPosition = position;
-      await PanicService.triggerAlert(position.latitude, position.longitude);
+      final result = await PanicService.triggerAlert(
+        position.latitude,
+        position.longitude,
+      );
+
       if (!mounted) return;
+
+      // Use real API response data
+      final alertId = result['id']?.toString() ?? '—';
+      final nearest = nearestFacilityName ?? 'Nearest support centre';
+      final ref = 'EAS-${DateTime.now().year}-${alertId.padLeft(4, '0')}';
+
       setState(() {
         triggering = false;
+        referenceId = ref;
         statusMessage =
-            'Emergency request created successfully.\nReference: EAS-2026-001\nNearest support: Andheri Police Station\nEstimated response: 6 mins';
+            'Emergency request created successfully.\n'
+            'Reference: $ref\n'
+            'Nearest support: $nearest\n'
+            'Estimated response: 6–10 mins';
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         triggering = false;
         statusMessage =
-            'Emergency assistance is currently unavailable. Please call local emergency services directly.';
+            'Emergency assistance is currently unavailable. '
+            'Please call local emergency services directly.';
       });
     }
   }
@@ -93,6 +114,7 @@ class _PanicScreenState extends State<PanicScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // SOS Button Card
                     Card(
                       color: const Color(0xFFB71C1C),
                       child: Padding(
@@ -111,7 +133,7 @@ class _PanicScreenState extends State<PanicScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                onPressed: triggerAlert,
+                                onPressed: triggering ? null : triggerAlert,
                                 icon: const Icon(
                                   Icons.warning_amber_rounded,
                                   size: 32,
@@ -140,6 +162,8 @@ class _PanicScreenState extends State<PanicScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
+
+                    // Status Card
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -151,17 +175,34 @@ class _PanicScreenState extends State<PanicScreen> {
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 6),
-                            Text(
-                              statusMessage.isEmpty
-                                  ? 'Tap the button to request support.'
-                                  : statusMessage,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
+                            if (triggering)
+                              const Row(
+                                children: [
+                                  SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('Sending emergency alert...'),
+                                ],
+                              )
+                            else
+                              Text(
+                                statusMessage.isEmpty
+                                    ? 'Tap the button above to request support.'
+                                    : statusMessage,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
+
+                    // Nearby Facilities
                     Text(
                       'Nearby support',
                       style: Theme.of(context).textTheme.titleLarge,
@@ -217,8 +258,7 @@ class _PanicScreenState extends State<PanicScreen> {
                                             f['phone'].toString(),
                                           );
                                         } catch (_) {
-                                          if (!mounted || !context.mounted)
-                                            return;
+                                          if (!mounted) return;
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -242,13 +282,12 @@ class _PanicScreenState extends State<PanicScreen> {
                                             currentLng:
                                                 _currentPosition?.longitude ??
                                                 0,
-                                            destLat: lat,
-                                            destLng: lng,
+                                            destLat: (lat as num).toDouble(),
+                                            destLng: (lng as num).toDouble(),
                                             label: name,
                                           );
                                         } catch (_) {
-                                          if (!mounted || !context.mounted)
-                                            return;
+                                          if (!mounted) return;
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(

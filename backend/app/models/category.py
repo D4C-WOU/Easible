@@ -1,10 +1,9 @@
-from sqlalchemy import Column, Integer,String
+from sqlalchemy import Column, Integer, String, Text
 from app.db.database import Base
 
 class Category(Base):
-  __tablename__ = 'categories'
+    __tablename__ = 'categories'
 
-  id = Column(Integer,primary_key = True,index = True)
-  name = Column(String(100))
-  description = Column(String(255))
-  
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(150))
+    description = Column(Text)
